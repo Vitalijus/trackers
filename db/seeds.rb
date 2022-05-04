@@ -5,3 +5,4 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Tracker.create([{ latitude: 43.9899288, longitude: 33.93884 }, { latitude: 22.9883993, longitude: 43.98877 }])

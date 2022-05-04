@@ -23,6 +23,10 @@ gem 'puma', '~> 5.0'
 gem 'rollbar'
 # Geocoding
 gem 'geocoder'
+# GraphQL
+gem 'graphql'
+# GraphQL cache
+gem 'graphql-cache'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
@@ -35,6 +39,9 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'dotenv-rails'
+  gem 'faker'
+  gem 'factory_bot_rails'
+  gem 'graphiql-rails'
   gem 'pry', '~> 0.13.1'
 end
 
