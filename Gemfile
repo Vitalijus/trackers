@@ -27,7 +27,8 @@ gem 'geocoder'
 gem 'graphql'
 # GraphQL cache
 gem 'graphql-cache'
-
+# Use SCSS for stylesheets
+gem 'sass-rails', '>= 6'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
 
@@ -41,7 +42,6 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'faker'
   gem 'factory_bot_rails'
-  gem 'graphiql-rails'
   gem 'pry', '~> 0.13.1'
 end
 
@@ -49,6 +49,7 @@ group :development do
   gem 'listen', '~> 3.3'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+  gem 'graphiql-rails'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
