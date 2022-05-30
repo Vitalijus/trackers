@@ -1,14 +1,19 @@
+# To start this file run below:
 # rake socketing:start
-# rails server -b 0.0.0.0
-# http://52.12.75.4:3000/
-# http://52.12.75.4:3000/sidekiq/recurring-jobs
-# internet.life.com.by
-# iot.truphone.com
-# ssh -i "fmt100.pem" ubuntu@ec2-52-12-75-4.us-west-2.compute.amazonaws.com
-# scp -i fmt100.pem  ~/Downloads/gps_server1.py ubuntu@52.12.75.4:/home/ubuntu gps_server1.py
 
-# Send message to the server locally
-# echo '"\u0000\u000F357544374597827"' | nc 127.0.0.1 65432
+# Setup Teltonika Configurator GPRS
+# internet.life.com.by | domain: 52.12.75.4 | port:65432
+# iot.truphone.com     | domain: 52.12.75.4 | port:65432
+
+# HOW IT WORKS?
+# Teltonika module is communicating with the server. First time device is authenticated,
+# second data decoded and confirmation about number_of_rec is sent back to the module.
+# Positive response is sent, if decoded num_of_rec matching with what
+# module has send, then communication is over. Otherwise if decoded
+# num_of_rec not matching with module's, then module will send data again
+# When num_of_rec matching Tracker data, like latitude, longitude, speed is being saved to the DB.
+
+ClientThread class can run multiple threads in parallel, when data
 
 namespace :socketing do
   desc "Start TCP server"
