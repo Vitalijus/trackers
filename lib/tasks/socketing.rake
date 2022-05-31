@@ -13,8 +13,6 @@
 # num_of_rec not matching with module's, then module will send data again
 # When num_of_rec matching Tracker data, like latitude, longitude, speed is being saved to the DB.
 
-ClientThread class can run multiple threads in parallel, when data
-
 namespace :socketing do
   desc "Start TCP server"
   task start: :environment do
@@ -283,7 +281,6 @@ namespace :socketing do
             vehicle.build_response
 
             Rollbar.log("error", "#{vehicle.errors} | socketing.rake, line 285") if vehicle.errors.present?
-
             Tracker.create(build_tracker(gps, vehicle.result)) if vehicle.errors.nil? && vehicle.result.present?
           end
         end
