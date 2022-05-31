@@ -279,18 +279,22 @@ namespace :socketing do
       def create_tracker(gps_data)
         gps_data.each do |gps|
           if gps[:gps_data][:latitude] != 0.0 && gps[:gps_data][:longitude] != 0.0 && gps[:gps_data][:speed] > 7
-            # vehicle = Vehicle.find_by(tracker_imei: gps[:imei])
-            # vehicle.trackers.create(build_tracker(gps)) if vehicle.present?
-            Tracker.create(build_tracker(gps))
+            vehicle = Vehicles::VehicleByImei.new(gps[:imei].to_s)
+            vehicle.build_response
+
+            Rollbar.log("error", "#{vehicle.errors} | socketing.rake, line 285") if vehicle.errors.present?
+
+            Tracker.create(build_tracker(gps, vehicle.result)) if vehicle.errors.nil? && vehicle.result.present?
           end
         end
       end
 
-      def build_tracker(gps)
+      def build_tracker(gps, vehicle_id)
         {
           longitude: gps[:gps_data][:longitude],
           latitude: gps[:gps_data][:latitude],
-          speed: gps[:gps_data][:speed]
+          speed: gps[:gps_data][:speed],
+          vehicle_id: vehicle_id
         }
       end
     end # end of class

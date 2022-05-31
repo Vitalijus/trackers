@@ -19,6 +19,8 @@ gem 'puma', '~> 5.0'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
+# Client library
+gem "http"
 # Logging
 gem 'rollbar'
 # Geocoding
