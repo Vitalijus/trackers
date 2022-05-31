@@ -8,7 +8,7 @@ module Queries
       type [Types::TrackerType], null: true
 
       def resolve(args)
-        trackers = Tracker.where(vehicle_id: args[:vehicle_id])
+        trackers = Tracker.where(vehicle_id: args[:vehicle_id]).order("created_at DESC")
         trackers
       end
     end

@@ -12,5 +12,7 @@ module Types
     field :radius_size, Int, null: true
     field :radius_longitude, Float, null: true
     field :radius_latitude, Float, null: true
+    field :created_at, String, null: true
+    field :updated_at, String, null: true
   end
 end

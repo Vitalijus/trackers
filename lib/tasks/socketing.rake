@@ -5,6 +5,10 @@
 # internet.life.com.by | domain: 52.12.75.4 | port:65432
 # iot.truphone.com     | domain: 52.12.75.4 | port:65432
 
+# Start rails server on EC2 and open GraphQL UI
+# rails server -b 0.0.0.0
+# http://34.209.247.30:3000/graphiql
+
 # HOW IT WORKS?
 # Teltonika module communicating with the server. First time device is authenticated,
 # second data decoded and confirmation about number_of_rec is sent back to the module.
