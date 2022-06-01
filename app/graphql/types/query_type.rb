@@ -5,6 +5,6 @@ module Types
     include GraphQL::Types::Relay::HasNodesField
 
     # Trackers
-    field :trackers_by_vehicle_ids, resolver: Queries::Trackers::TrackersByVehicleIds
+    field :trackers_by_minutes_ago, resolver: Queries::Trackers::TrackersByMinutesAgo
   end
 end
