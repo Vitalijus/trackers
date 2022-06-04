@@ -12,10 +12,12 @@ module GoogleMaps
     end
 
     def build_response
-      if response.empty?
+      response_data = response
+
+      if response_data.empty?
         @errors = "Connection failure"
       else
-        @result = response
+        @result = response_data
       end
     end
   end

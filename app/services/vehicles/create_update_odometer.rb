@@ -15,12 +15,14 @@ class Vehicles::CreateUpdateOdometer < Vehicles::Base
   end
 
   def build_response
-    if call.empty?
+    response = call
+
+    if response.empty?
       @errors = "Connection failure"
-    elsif call["errors"].present?
-      @errors = "#{call["errors"]}"
+    elsif response["errors"].present?
+      @errors = "#{response["errors"]}"
     else
-      @result = process_response(call)
+      @result = process_response(response)
     end
   end
 

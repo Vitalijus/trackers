@@ -38,9 +38,11 @@ class Tracker < ApplicationRecord
     ]
   end
 
-  # ----------- #
-  # Distance API and createUpdateOdometer
 
+  # ----------- #
+
+
+  # Distance API and createUpdateOdometer
   # If Distance API pass and Odometer is created, then should leave boolean flag true on a records.
   def create_odometer
     # Get last 4 Trackers and check that none been called to Distance API
