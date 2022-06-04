@@ -21,7 +21,7 @@ module GoogleMaps
     end
 
     def address(origins, destinations)
-      URI("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{origins[:latitude]}%2C#{origins[:longitude]}&destinations=#{destinations[:latitude]}%2C#{destinations[:longitude]}&key=AIzaSyC1xYJS1QPq9UQAtFwoMJRNFhDzKKTFPjQ")
+      URI("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{origins[:latitude]}%2C#{origins[:longitude]}&destinations=#{destinations[:latitude]}%2C#{destinations[:longitude]}&key=#{ENV.fetch("GOOGLE_MAP_API")}")
     end
   end
 end

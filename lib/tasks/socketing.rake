@@ -14,6 +14,12 @@
 # CTRL + A + D from terminal to detached the existing process and let it run.
 # Type screen -r, then "screen [-d] -r [pid.]tty.host" to resume detached process.
 
+# How to add ENV var?
+# Connect to EC2 and open file with vim ~/.bash_profile
+# Add ENV var: export EXAMPLE=0000 and close file.
+# Provision new ENV with: source ~/.bash_profile, open rails c and run ENV["GOOGLE_MAP_API"]
+
+
 # HOW IT WORKS?
 # Teltonika module communicating with the server. First time device is authenticated,
 # second data decoded and confirmation about number_of_rec is sent back to the module.

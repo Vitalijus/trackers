@@ -53,7 +53,7 @@ class Tracker < ApplicationRecord
       distance.build_response
       Rollbar.log("error", "#{distance.errors}") if distance.errors.present?
 
-      if distance.result.present? #&& distance_conditional(distance.result)
+      if distance.result.present?
         odometer = request_odometer(odometer_params(distance.result))
         odometer.build_response
         Rollbar.log("error", "Could not create an odometer: #{odometer.errors}") if odometer.errors.present?
@@ -69,13 +69,6 @@ class Tracker < ApplicationRecord
 
   def request_distance_api(trackers)
     GoogleMaps::Distance.new(origins_coordinates(trackers), destinations_coordinates(trackers))
-  end
-
-  # Check that distance value is above 0 and below 1200 meters.
-  # Check is added to improve vehicle odometer precision.
-  def distance_conditional(params)
-    params["rows"][0]["elements"][0]["distance"]["value"].between?(1, 1200) &&
-     params["rows"][0]["elements"][0]["duration"]["value"] > 0
   end
 
   # createUpdateOdometer payload
