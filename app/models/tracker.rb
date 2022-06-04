@@ -53,7 +53,7 @@ class Tracker < ApplicationRecord
       distance.build_response
       Rollbar.log("error", "#{distance.errors}") if distance.errors.present?
 
-      if distance.result.present? && distance_conditional(distance.result)
+      if distance.result.present? #&& distance_conditional(distance.result)
         odometer = request_odometer(odometer_params(distance.result))
         odometer.build_response
         Rollbar.log("error", "Could not create an odometer: #{odometer.errors}") if odometer.errors.present?
