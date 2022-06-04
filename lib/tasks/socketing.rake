@@ -9,6 +9,11 @@
 # rails server -b 0.0.0.0
 # http://34.209.247.30:3000/graphiql
 
+# Keep server running on EC2 in the background
+# screen rails server -b 0.0.0.0
+# CTRL + A + D from terminal to detached the existing process and let it run.
+# Type screen -r, then "screen [-d] -r [pid.]tty.host" to resume detached process.
+
 # HOW IT WORKS?
 # Teltonika module communicating with the server. First time device is authenticated,
 # second data decoded and confirmation about number_of_rec is sent back to the module.
