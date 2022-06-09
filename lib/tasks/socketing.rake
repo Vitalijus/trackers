@@ -9,16 +9,15 @@
 # rails server -b 0.0.0.0
 # http://34.209.247.30:3000/graphiql
 
-# Keep server running on EC2 in the background
+# How to keep server running on EC2 in the background?
 # screen rails server -b 0.0.0.0
 # CTRL + A + D from terminal to detached the existing process and let it run.
-# Type screen -r, then "screen [-d] -r [pid.]tty.host" to resume detached process.
+# Type screen -r, then "screen -d -r [pid.]tty.host" to resume detached process.
 
 # How to add ENV var?
 # Connect to EC2 and open file with vim ~/.bash_profile
 # Add ENV var: export EXAMPLE=0000 and close file.
 # Provision new ENV with: source ~/.bash_profile, open rails c and run ENV["GOOGLE_MAP_API"]
-
 
 # HOW IT WORKS?
 # Teltonika module communicating with the server. First time device is authenticated,
@@ -289,23 +288,47 @@ namespace :socketing do
         end # end of infinite loop
       end # run method
 
-      def create_tracker(gps_data)
-        gps_data.each do |gps|
-          if gps[:gps_data][:latitude] != 0.0 && gps[:gps_data][:longitude] != 0.0 && gps[:gps_data][:speed] > 7
-            vehicle = Vehicles::VehicleByImei.new(gps[:imei].to_s)
+      # Tracker model
+      def create_tracker(tracker_data)
+        tracker_data.each do |tracker|
+          if tracker_valid?(tracker)
+            io_data = io_data(tracker)
+            vehicle = Vehicles::VehicleByImei.new(tracker[:imei].to_s)
             vehicle.build_response
 
-            Rollbar.log("error", "#{vehicle.errors} | socketing.rake, line 285") if vehicle.errors.present?
-            Tracker.create(build_tracker(gps, vehicle.result)) if vehicle.errors.nil? && vehicle.result.present?
+            Rollbar.log("error", "#{vehicle.errors}") if vehicle.errors.present?
+            Tracker.create(build_tracker(tracker, io_data, vehicle.result)) if vehicle.result.present?
           end
         end
       end
 
-      def build_tracker(gps, vehicle_id)
+      # Check if gps data is above certain level
+      def tracker_valid?(tracker)
+        tracker[:gps_data][:latitude] != 0.0 &&
+          tracker[:gps_data][:longitude] != 0.0 &&
+          tracker[:gps_data][:speed] > 7
+      end
+
+      # IO data collection.
+      def io_data(tracker)
+        io_hash = {}
+
+        tracker[:io_data].each do |k,v|
+          io_hash[:total_odometer] = v if k == 16 # IO Total odometer
+        end
+
+        io_hash
+      end
+
+      # Tracker model data
+      def build_tracker(tracker, io_data, vehicle_id)
         {
-          longitude: gps[:gps_data][:longitude],
-          latitude: gps[:gps_data][:latitude],
-          speed: gps[:gps_data][:speed],
+          imei: tracker[:imei],
+          longitude: tracker[:gps_data][:longitude],
+          latitude: tracker[:gps_data][:latitude],
+          speed: tracker[:gps_data][:speed],
+          total_odometer: io_data[:total_odometer],
+          date_time: tracker[:date_time],
           vehicle_id: vehicle_id
         }
       end
@@ -313,5 +336,15 @@ namespace :socketing do
 
     new_thread = ClientThread.new(65432)
     p new_thread.run
+
+    # To test Tracker creation locally use below data
+    #
+    # new_thread = ClientThread.new
+    # tracker_data = [
+    #   {:imei=>"357544374597827", :number_of_rec=>2, :date_time=>"2022-01-10T19:03:49", :priority=>0, :gps_data=>{:longitude=>27.53355, :latitude=>53.9341616, :altitude=>0, :angle=>0, :satellites=>0, :speed=>10}, :io_event_code=>0, :number_of_io_elements=>12, :io_data=>{239=>0, 240=>0, 21=>5, 200=>0, 69=>2, 181=>0, 182=>0, 66=>0, 67=>3953, 68=>0, 241=>25704, 16=>707167}},
+    #   {:imei=>"357544374597827", :number_of_rec=>2, :date_time=>"2022-01-10T19:03:51", :priority=>0, :gps_data=>{:longitude=>27.53355, :latitude=>53.9341616, :altitude=>0, :angle=>0, :satellites=>0, :speed=>22}, :io_event_code=>240, :number_of_io_elements=>12, :io_data=>{239=>0, 240=>1, 21=>5, 200=>0, 69=>2, 181=>0, 182=>0, 66=>0, 67=>3949, 68=>0, 241=>25704, 16=>707167}},
+    #   {:imei=>"357544374597827", :number_of_rec=>2, :date_time=>"2022-01-10T19:03:51", :priority=>0, :gps_data=>{:longitude=>0.0, :latitude=>0.0, :altitude=>0, :angle=>0, :satellites=>0, :speed=>0}, :io_event_code=>240, :number_of_io_elements=>12, :io_data=>{239=>0, 240=>1, 21=>5, 200=>0, 69=>2, 181=>0, 182=>0, 66=>0, 67=>3949, 68=>0, 241=>25704, 16=>707167}}
+    # ]
+    # p new_thread.create_tracker(tracker_data)
   end
 end

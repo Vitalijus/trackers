@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_04_112718) do
+ActiveRecord::Schema.define(version: 2022_06_09_210523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -29,6 +29,9 @@ ActiveRecord::Schema.define(version: 2022_06_04_112718) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "distance_api", default: false
+    t.string "imei"
+    t.integer "total_odometer"
+    t.datetime "date_time"
   end
 
 end
