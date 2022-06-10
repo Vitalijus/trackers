@@ -1,30 +1,34 @@
-# To start this file run below:
-# rake socketing:start
+# Teltonika module configurations:
+# https://teltonika-gps.com/product/fmt100/
 
 # Setup Teltonika Configurator GPRS
-# internet.life.com.by | domain: 52.12.75.4 | port:65432
-# iot.truphone.com     | domain: 52.12.75.4 | port:65432
+# APN name: internet.life.com.by | domain: 52.12.75.4 (AWS Public IP) | port:65432 (AWS Security group PORT)
+# APN name: iot.truphone.com     | domain: 52.12.75.4 (AWS Public IP) | port:65432 (AWS Security group PORT)
 
-# Start rails server on EC2 and open GraphQL UI
-# rails server -b 0.0.0.0
-# http://34.209.247.30:3000/graphiql
-
-# How to keep server running on EC2 in the background?
-# screen rails server -b 0.0.0.0
+# How to keep server running on EC2 in the background (screen mode)?
+# screen rails server -b 0.0.0.0 to start rails server.
 # CTRL + A + D from terminal to detached the existing process and let it run.
 # Type screen -r, then "screen -d -r [pid.]tty.host" to resume detached process.
 
+# Start rails server on EC2 and open GraphQL UI
+# rails server -b 0.0.0.0, to start in screen mode: screen rails server -b 0.0.0.0
+# http://34.209.247.30:3000/graphiql (AWS Public IP), GQL playground.
+
+# To start socketing.rake file run below:
+# rake socketing:start, to start in screen mode: screen rake socketing:start
+
 # How to add ENV var?
 # Connect to EC2 and open file with vim ~/.bash_profile
-# Add ENV var: export EXAMPLE=0000 and close file.
+# Add ENV var: export GOOGLE_MAP_API=0000 and close file.
 # Provision new ENV with: source ~/.bash_profile, open rails c and run ENV["GOOGLE_MAP_API"]
 
 # HOW IT WORKS?
-# Teltonika module communicating with the server. First time device is authenticated,
-# second data decoded and confirmation about number_of_rec is sent back to the module.
+# Teltonika module communicating with the server. First time module is authenticated by IMEI,
+# second time data from module decoded and confirmation about number_of_rec is sent back to the module.
 # Positive response is sent, if decoded num_of_rec matching with what
 # module has send, then communication is over. Otherwise if decoded
 # num_of_rec not matching with module's, then module will send data again
+# Module is sending data packets every 2min.
 # When num_of_rec matching Tracker data, like latitude, longitude, speed is being saved to the DB.
 
 namespace :socketing do
@@ -315,6 +319,7 @@ namespace :socketing do
 
         tracker[:io_data].each do |k,v|
           io_hash[:total_odometer] = v if k == 16 # IO Total odometer
+          io_hash[:trip_odometer] = v if k == 199 # IO Trip odometer
         end
 
         io_hash
@@ -328,6 +333,7 @@ namespace :socketing do
           latitude: tracker[:gps_data][:latitude],
           speed: tracker[:gps_data][:speed],
           total_odometer: io_data[:total_odometer],
+          trip_odometer: io_data[:trip_odometer],
           date_time: tracker[:date_time],
           vehicle_id: vehicle_id
         }
