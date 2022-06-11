@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_10_154935) do
+ActiveRecord::Schema.define(version: 2022_06_11_114040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(version: 2022_06_10_154935) do
     t.integer "total_odometer"
     t.datetime "date_time"
     t.integer "trip_odometer"
+    t.json "address"
+    t.string "display_name"
   end
 
 end
