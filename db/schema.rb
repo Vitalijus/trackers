@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_11_114040) do
+ActiveRecord::Schema.define(version: 2022_06_11_133425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -21,14 +21,8 @@ ActiveRecord::Schema.define(version: 2022_06_11_114040) do
     t.float "longitude"
     t.string "speed"
     t.uuid "vehicle_id"
-    t.boolean "within_radius"
-    t.string "city"
-    t.integer "radius_size"
-    t.float "radius_longitude"
-    t.float "radius_latitude"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "distance_api", default: false
     t.string "imei"
     t.integer "total_odometer"
     t.datetime "date_time"
