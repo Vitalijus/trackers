@@ -5,98 +5,92 @@ module Queries
       description "Stats by vehicle id."
 
       argument :vehicle_id, ID, required: true
+      argument :imei, ID, required: true
       type Types::StatsType, null: true
 
       def resolve(args)
-        trackers = Tracker.where(vehicle_id: args[:vehicle_id]).order("date_time ASC")
+        trackers = Tracker.where(vehicle_id: args[:vehicle_id], imei: args[:imei]).order("date_time ASC")
+        trackers_by_imei = Tracker.where(imei: args[:imei])
+        cities = cities(trackers)
+        elderships = elderships(trackers)
 
         {
-          total_odometer: total_odometer(trackers),
-          trip_odometer: trip_odometer(trackers),
-          city: city(trackers),
+          total_tracker_odometer: total_odometer(trackers),
+          total_vehicle_odometer: trip_odometer(trackers),
+          cities: cities,
+          elderships: elderships,
           count_records: trackers.count
         }
       end
 
-      def total_odometer(trackers)
-        trackers.max_by{|tracker| tracker[:total_odometer] }[:total_odometer]
+      def total_odometer(trackers_by_imei)
+        trackers_by_imei.max_by{|tracker| tracker[:total_odometer] }[:total_odometer]
       end
 
       def trip_odometer(trackers)
         trackers.sum {|tracker| tracker[:trip_odometer] }
       end
 
-      def city(trackers)
-        # cities = trackers.map{|tracker| tracker["address"]["city"] }.uniq
-        # towns = trackers.map{|tracker| tracker["address"]["town"] }.uniq
-        # city_town_list = (cities.uniq << towns.uniq).flatten.compact
-
-        cities = trackers.map{|tracker| {city: tracker["address"]["city"], town: tracker["address"]["town"], distance: nil}}.uniq
+      def cities(trackers)
+        cities = trackers.map{|tracker| {city: tracker["address"]["city"], town: tracker["address"]["town"], percentage: nil, odometer: nil}}.uniq
 
         cities.each do |city|
+          # City
           if city[:city].present?
-            city[:distance] = Tracker.where("address ->> 'city' = '#{city[:city]}'").map{|city| city[:trip_odometer]}.sum
-          elsif city[:town].present?
-            city[:distance] = Tracker.where("address ->> 'town' = '#{city[:town]}'").map{|city| city[:trip_odometer]}.sum
+            city[:odometer] = trackers.where("address ->> 'city' = '#{city[:city]}'").map{|city| city[:trip_odometer]}.sum
+            city[:percentage] = odometer_percentage(total_trip_odometer(trackers), city[:odometer])
+          end
+
+          # Town
+          if city[:town].present?
+            city[:odometer] = trackers.where("address ->> 'town' = '#{city[:town]}'").map{|city| city[:trip_odometer]}.sum
+            city[:percentage] = odometer_percentage(total_trip_odometer(trackers), city[:odometer])
           end
         end
 
-        total = []
-        cities.each do |city|
-          total << city[:distance]
-        end
-
-        total_cities_distance = total.compact.sum
-        trip_odometer = trackers.sum {|tracker| tracker[:trip_odometer] }
-        outside_city_distance = trip_odometer - total_cities_distance
-
+        # Neither city or town
         cities.each do |city|
           if city[:city].nil? && city[:town].nil?
-            city[:distance] = outside_city_distance
+            city[:odometer] = total_trip_odometer(trackers) - total_items_odometer(cities)
+            city[:percentage] = odometer_percentage(total_trip_odometer(trackers), city[:odometer])
           end
         end
 
-        # cities = trackers.map{|tracker| {city: tracker["address"]["city"], town: tracker["address"]["town"], distance: []}}.uniq
+        cities
+      end
 
-        # cities.each do |city|
-        #   trackers.each do |tracker|
-        #     city[:distance] << tracker["trip_odometer"] if city[:city] == tracker["address"]["city"]
-        #     city[:distance] << tracker["trip_odometer"] if city[:town] == tracker["address"]["town"]
-        #   end
-        # end
-        #
-        # cities.map{|city| { city: city[:city], town: city[:town], distance: city[:distance].sum }}
+      def elderships(trackers)
+        elderships = trackers.map{|tracker| {eldership: tracker["address"]["suburb"], percentage: nil, odometer: nil}}.uniq
 
-        # r = cities.each do |city|
-        #   trackers.each do |tracker|
-        #     if city[:city] == tracker["address"]["city"]
-        #       city[:distance] << tracker["trip_odometer"]
-        #     elsif city[:town] == tracker["address"]["town"]
-        #       city[:distance] << tracker["trip_odometer"]
-        #     else
-        #       city[:distance] << tracker["trip_odometer"]
-        #     end
-        #   end
-        # end
-        #
-        # cities.map{|city| {city: city[:city], town: city[:town], distance: city[:distance].sum} }
-        # cities.uniq.compact.map{|city| { city: city, distance: 0 }}
-        # city_town_list = (cities.uniq << towns.uniq).flatten.compact
-
-        # trackers.where()
-        # trackers.map do |tracker|
-        #   { id: tracker[:id], start: tracker[:start] }
-        # end
-
-        with_distance = trackers.map{ |tracker| { city: tracker["address"]["city"], town: tracker["address"]["town"], distance: tracker["trip_odometer"] } }
-
-        city_distance = []
-        city_town_list.each do |city|
-          trackers.each do |tracker|
-            if city == tracker["address"]["city"] || city == tracker["address"]["town"]
-              city_distance <<
+        # Elderships
+        elderships.each do |eldership|
+          if eldership[:eldership].present?
+            eldership[:odometer] = trackers.where("address ->> 'suburb' = '#{eldership[:eldership]}'").map{|eldership| eldership[:trip_odometer]}.sum
+            eldership[:percentage] = odometer_percentage(total_trip_odometer(trackers), eldership[:odometer].to_f)
           end
         end
+
+        # Unknown elderships
+        elderships.each do |eldership|
+          if eldership[:eldership].nil?
+            eldership[:odometer] = total_trip_odometer(trackers) - total_items_odometer(elderships)
+            eldership[:percentage] = odometer_percentage(total_trip_odometer(trackers), eldership[:odometer].to_f)
+          end
+        end
+
+        elderships
+      end
+
+      def total_trip_odometer(trackers)
+        trackers.sum {|tracker| tracker[:trip_odometer] }
+      end
+
+      def total_items_odometer(items)
+        items.map{ |item| item[:odometer] }.compact.sum
+      end
+
+      def odometer_percentage(total_trip_odometer, item_odometer)
+        (item_odometer.to_f / total_trip_odometer) * 100
       end
     end
   end
