@@ -6,6 +6,6 @@ module Types
 
     # Trackers
     field :trackers_by_minutes_ago, resolver: Queries::Trackers::TrackersByMinutesAgo
-    field :stats_by_vehicle_id, resolver: Queries::Trackers::StatsByVehicleId
+    field :stats_by_vehicles_id, resolver: Queries::Trackers::StatsByVehiclesId
   end
 end

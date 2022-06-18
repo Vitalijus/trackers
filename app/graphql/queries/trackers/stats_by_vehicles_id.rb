@@ -1,30 +1,34 @@
 module Queries
   module Trackers
-    class StatsByVehicleId < Queries::BaseQuery
-      graphql_name "StatsByVehicleId"
-      description "Stats by vehicle id."
+    class StatsByVehiclesId < Queries::BaseQuery
+      graphql_name "StatsByVehiclesId"
+      description "Stats by vehicles id."
 
-      argument :vehicle_id, ID, required: true
-      argument :imei, ID, required: true
-      type Types::StatsType, null: true
+      argument :vehicle_id, [ID], required: true
+      type [Types::StatsType], null: true
 
       def resolve(args)
-        trackers = Tracker.where(vehicle_id: args[:vehicle_id], imei: args[:imei]).order("date_time ASC")
-        trackers_by_imei = Tracker.where(imei: args[:imei])
-        cities = cities(trackers)
-        elderships = elderships(trackers)
+        trackers_list = []
 
+        args[:vehicle_id].each do |vehicle_id|
+          trackers = Tracker.where(vehicle_id: vehicle_id).order("date_time ASC")
+          cities = cities(trackers)
+          elderships = elderships(trackers)
+
+          trackers_list << build_tracker_data(vehicle_id, cities, elderships, trackers)
+        end
+
+        trackers_list
+      end
+
+      def build_tracker_data(vehicle_id, cities, elderships, trackers)
         {
-          total_tracker_odometer: total_odometer(trackers),
+          vehicle_id: vehicle_id,
           total_vehicle_odometer: trip_odometer(trackers),
           cities: cities,
           elderships: elderships,
           count_records: trackers.count
         }
-      end
-
-      def total_odometer(trackers_by_imei)
-        trackers_by_imei.max_by{|tracker| tracker[:total_odometer] }[:total_odometer]
       end
 
       def trip_odometer(trackers)
