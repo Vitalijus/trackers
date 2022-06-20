@@ -310,7 +310,7 @@ namespace :socketing do
       def tracker_valid?(tracker)
         tracker[:gps_data][:latitude] != 0.0 &&
           tracker[:gps_data][:longitude] != 0.0 &&
-          tracker[:gps_data][:speed] > 7
+          tracker[:gps_data][:speed] > 5
       end
 
       # IO data collection.
