@@ -1,3 +1,15 @@
+# query statsByVehiclesId {
+#   statsByVehiclesId(
+#     vehicleId: ["76d7d529-02f6-47ae-877f-98f234cd990a", "76d7d529-02f6-47ae-877f-98f234cd9900", "76d7d529-02f6-47ae-877f-98f234cd9901"]
+#   ){
+#     vehicleId
+#     totalVehicleOdometer
+#     countRecords
+#     cities
+#     elderships
+#   }
+# }
+
 module Queries
   module Trackers
     class StatsByVehiclesId < Queries::BaseQuery

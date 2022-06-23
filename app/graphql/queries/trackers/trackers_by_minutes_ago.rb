@@ -1,3 +1,15 @@
+# query trackersByMinutesAgo{
+#   trackersByMinutesAgo(minutesAgo: 100){
+#     id
+#     vehicleId
+#     latitude
+#     longitude
+#     speed
+#     createdAt
+#     updatedAt
+#   }
+# }
+
 module Queries
   module Trackers
     class TrackersByMinutesAgo < Queries::BaseQuery
