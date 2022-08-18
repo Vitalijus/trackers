@@ -6,4 +6,7 @@ Rails.application.routes.draw do
 
   # GQL endpoint
   post "/graphql", to: "graphql#execute"
+
+  # Home page
+  root to: "statuses#show"
 end
