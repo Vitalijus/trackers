@@ -8,5 +8,5 @@ Rails.application.routes.draw do
   post "/graphql", to: "graphql#execute"
 
   # Home page
-  root to: "statuses#show"
+  root to: "statuses#index"
 end

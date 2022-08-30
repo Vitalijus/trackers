@@ -1,6 +1,6 @@
-class StatusesController < ApplicationController
-  def show
-    render json: {
+class StatusesController < ActionController::Base
+  def index
+    @results = render html: {
       status: "OK",
       rails_version: Rails::VERSION::STRING,
       ruby_version: RUBY_VERSION,
