@@ -1,9 +1,9 @@
 # Dockerfile
-FROM ruby:2.7.4
+FROM ruby:3.3.0
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
-WORKDIR /myapp
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+WORKDIR /trackers
+COPY Gemfile /trackers/Gemfile
+COPY Gemfile.lock /trackers/Gemfile.lock
 RUN bundle install
 
 # Add a script to be executed every time the container starts. Fixes a glitch with the pids directory by removing the server.pid file on execute.
