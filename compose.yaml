@@ -1,0 +1,41 @@
+name: trackers
+
+services:
+  web:
+    image: rails-server
+    # environment:
+    #   - RAILS_ENV=test
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/trackers
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+
+  rake:
+    build: .
+    image: tcp-server
+    command: bundle exec rake socketing:start
+    # entrypoint: [./entrypoint.sh]
+    # command: entrypoint.sh
+    # command: bundle exec rake socketing:start
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - type: bind
+  #       source: .:/trackers/lib/tasks/socketing.rake
+  #       target: .:/trackers/lib/tasks/socketing.rake
+  #       read_only: true
+    # entrypoint: /trackers/entrypoint.sh
+    # volumes:
+    #   - .:/trackers/Rakefile
+    # command: bundle exec rake socketing:start

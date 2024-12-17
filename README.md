@@ -36,6 +36,18 @@ module has send, then communication is over. Otherwise if decoded num_of_rec not
 - FMT100 module: [https://teltonika-gps.com/products/trackers/fmt100](https://teltonika-gps.com/products/trackers/fmt100).
 - Codec: [https://wiki.teltonika-gps.com/view/Codec](https://wiki.teltonika-gps.com/view/Codec).
 
+## Run the application
+
+Command to build the application:
+docker compose up --build
+
+Command to stop the application:
+docker compose down
+
+You can run the application detached from the terminal by adding the -d option.
+docker compose up --build -d
+
+Open a browser and view the application at http://localhost:3000
 ## Installing
 
 Pull the application code from the github repo.
