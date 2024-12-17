@@ -14,8 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 - Install [Ruby](https://www.ruby-lang.org/en/downloads/).
 - Install [Postgres](https://www.postgresql.org/).
 - Install [Docker](https://www.docker.com/).
-- Install [Teltonika Configurator][https://wiki.teltonika-gps.com/view/Teltonika_Configurator_versions](https://wiki.teltonika-gps.com/view/Teltonika_Configurator_versions).
-- Clone [trackers](https://github.com/Vitalijus/trackers).
+- Install [Teltonika Configurator](https://wiki.teltonika-gps.com/view/Teltonika_Configurator_versions).
 
 ## Setup Teltonika Configurator
 
@@ -125,29 +124,11 @@ bundle exec rspec --format RspecJunitFormatter \
 rails c
 ```
 
-### Soft delete
-
-Currently, there is no UI for deleting an object on a customer's app. Therefore, any deletions need to be done carefully in rails console.
-
-For soft delete, we use [acts_as_paranoid](https://github.com/ActsAsParanoid/acts_as_paranoid) gem that will set the `deleted_at` datetime field on the table. The deleted record will not be available in normal queries.
-
-- Find the person or company: `person = Person.find(1)`
-- Get the party of the above object: `party = person.party`
-- Destroy as usual: `party.destroy`
-
-This will perform soft delete on main object and associations.
-
 ### Reinitiate Database
 
 ```sh
 rake db:drop db:create db:migrate db:seed
 ```
-
-## Built With
-
-- [Docker](https://www.docker.com/) - PaaS.
-- [Postgres](https://www.postgresql.org/) - Open source database.
-- [GraphQL Ruby](https://graphql-ruby.org/) - Ruby implementation of GraphQL.
 
 ## Authors
 
@@ -157,31 +138,3 @@ rake db:drop db:create db:migrate db:seed
 ## Main technologies
 
 <img alt="Rails" src="https://img.shields.io/badge/rails-%23CC0000.svg?style=for-the-badge&logo=ruby-on-rails&logoColor=white"/> <img alt="Postgres" src ="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white"/> <img alt="GraphQL" src="https://img.shields.io/badge/-GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white"/>
-
-
-
-
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
