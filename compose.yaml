@@ -24,7 +24,9 @@ services:
   rake:
     build: .
     image: tcp-server
-    command: bundle exec rake socketing:start
+    command: docker-compose exec web rake socketing:start
+    # depends_on:
+    #   - db
     # entrypoint: [./entrypoint.sh]
     # command: entrypoint.sh
     # command: bundle exec rake socketing:start
